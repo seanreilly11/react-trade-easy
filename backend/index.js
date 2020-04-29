@@ -39,6 +39,125 @@ app.use(cors());
 
 app.get("/", (req, res) => res.send("Hello World!"));
 
+// user functions STARTS
+//show users
+app.get("/users", (req, res) => {
+    User.find().then((result) => {
+        res.send(result);
+    });
+}); // show users
+
+//show this user
+app.get("/users/u=:id", (req, res) => {
+    User.findOne({ _id: req.params.id }, (err, result) => {
+        if (result) {
+            res.send(result);
+        } else {
+            res.send("Can't find user with this ID");
+        }
+    }).catch((err) => res.send(err));
+}); // show this user
+
+//register user
+app.post("/users/register", (req, res) => {
+    User.findOne({ username: req.body.username }, (err, result) => {
+        if (result) {
+            res.send("This username is already taken. Please try another one");
+        } else {
+            const hash = bcryptjs.hashSync(req.body.password);
+            const user = new User({
+                _id: new mongoose.Types.ObjectId(),
+                username: req.body.username,
+                firstName: req.body.firstName,
+                lastName: req.body.lastName,
+                email: req.body.email,
+                password: hash,
+                watchlist: req.body.watchlist,
+                balance: req.body.balance,
+                location: req.body.location,
+            });
+            user.save()
+                .then((result) => {
+                    res.send(result);
+                })
+                .catch((err) => res.send(err));
+        }
+    });
+}); // register user
+
+//login user
+app.post("/users/login", (req, res) => {
+    User.findOne({ username: req.body.username }, (err, result) => {
+        if (result) {
+            if (bcryptjs.compareSync(req.body.password, result.password)) {
+                res.send(result);
+            } else {
+                res.send("Not authorised. Incorrect password");
+            }
+        } else {
+            res.send("User not found");
+        }
+    });
+}); // login user
+
+// update user
+app.patch("/users/u=:id", (req, res) => {
+    User.findById(req.params.id, (err, result) => {
+        const updatedUser = {
+            firstName: req.body.firstName,
+            lastName: req.body.lastName,
+            email: req.body.email,
+            location: req.body.location,
+        };
+        User.updateOne({ _id: req.params.id }, updatedUser)
+            .then((result) => {
+                res.send(result);
+            })
+            .catch((err) => res.send(err));
+    }).catch((err) => res.send("Not found"));
+}); // update user
+
+// update watchlist
+app.patch("/users/addWatchlist/u=:id", (req, res) => {
+    User.findById(idParreq.params.idam, (err, result) => {
+        const updatedWatchlist = {
+            $push: { watchlist: req.body.watchlist },
+        };
+        User.updateOne({ _id: req.params.id }, updatedWatchlist)
+            .then((result) => {
+                res.send(result);
+            })
+            .catch((err) => res.send(err));
+    }).catch((err) => res.send("Not found"));
+}); // update watchlist
+
+// remove from watchlist
+app.patch("/users/removeWatchlist/u=:id", (req, res) => {
+    User.findById(req.params.id, (err, result) => {
+        const updatedWatchlist = {
+            $pull: { watchlist: req.body.watchlist },
+        };
+        User.updateOne({ _id: req.params.id }, updatedWatchlist)
+            .then((result) => {
+                res.send(result);
+            })
+            .catch((err) => res.send(err));
+    }).catch((err) => res.send("Not found"));
+}); // remove from watchlist
+
+// delete a user
+app.delete("/users/u=:id", (req, res) => {
+    User.findOne({ _id: req.params.id }, (err, result) => {
+        if (result) {
+            User.deleteOne({ _id: req.params.id }, (err) => {
+                res.send("User deleted");
+            });
+        } else {
+            res.send("Can't delete user. Not found");
+        }
+    }).catch((err) => res.send(err));
+}); // delete a user
+
 // product functions STARTS
 //get all products
 app.get("/products", (req, res) => {
@@ -240,125 +359,6 @@ app.delete("/comments/c=:id", (req, res) => {
     }).catch((err) => res.send(err));
 }); // delete comment
 // comment functions ENDS
-
-// user functions STARTS
-//show users
-app.get("/users", (req, res) => {
-    User.find().then((result) => {
-        res.send(result);
-    });
-}); // show users
-
-//show this user
-app.get("/users/u=:id", (req, res) => {
-    User.findOne({ _id: req.params.id }, (err, result) => {
-        if (result) {
-            res.send(result);
-        } else {
-            res.send("Can't find user with this ID");
-        }
-    }).catch((err) => res.send(err));
-}); // show this user
-
-//register user
-app.post("/users/register", (req, res) => {
-    User.findOne({ username: req.body.username }, (err, result) => {
-        if (result) {
-            res.send("This username is already taken. Please try another one");
-        } else {
-            const hash = bcryptjs.hashSync(req.body.password);
-            const user = new User({
-                _id: new mongoose.Types.ObjectId(),
-                username: req.body.username,
-                firstName: req.body.firstName,
-                lastName: req.body.lastName,
-                email: req.body.email,
-                password: hash,
-                watchlist: req.body.watchlist,
-                balance: req.body.balance,
-                location: req.body.location,
-            });
-            user.save()
-                .then((result) => {
-                    res.send(result);
-                })
-                .catch((err) => res.send(err));
-        }
-    });
-}); // register user
-
-//login user
-app.post("/users/login", (req, res) => {
-    User.findOne({ username: req.body.username }, (err, result) => {
-        if (result) {
-            if (bcryptjs.compareSync(req.body.password, result.password)) {
-                res.send(result);
-            } else {
-                res.send("Not authorised. Incorrect password");
-            }
-        } else {
-            res.send("User not found");
-        }
-    });
-}); // login user
-
-// update user
-app.patch("/users/u=:id", (req, res) => {
-    User.findById(req.params.id, (err, result) => {
-        const updatedUser = {
-            firstName: req.body.firstName,
-            lastName: req.body.lastName,
-            email: req.body.email,
-            location: req.body.location,
-        };
-        User.updateOne({ _id: req.params.id }, updatedUser)
-            .then((result) => {
-                res.send(result);
-            })
-            .catch((err) => res.send(err));
-    }).catch((err) => res.send("Not found"));
-}); // update user
-
-// update watchlist
-app.patch("/users/addWatchlist/u=:id", (req, res) => {
-    User.findById(idParreq.params.idam, (err, result) => {
-        const updatedWatchlist = {
-            $push: { watchlist: req.body.watchlist },
-        };
-        User.updateOne({ _id: req.params.id }, updatedWatchlist)
-            .then((result) => {
-                res.send(result);
-            })
-            .catch((err) => res.send(err));
-    }).catch((err) => res.send("Not found"));
-}); // update watchlist
-
-// remove from watchlist
-app.patch("/users/removeWatchlist/u=:id", (req, res) => {
-    User.findById(req.params.id, (err, result) => {
-        const updatedWatchlist = {
-            $pull: { watchlist: req.body.watchlist },
-        };
-        User.updateOne({ _id: req.params.id }, updatedWatchlist)
-            .then((result) => {
-                res.send(result);
-            })
-            .catch((err) => res.send(err));
-    }).catch((err) => res.send("Not found"));
-}); // remove from watchlist
-
-// delete a user
-app.delete("/users/u=:id", (req, res) => {
-    User.findOne({ _id: req.params.id }, (err, result) => {
-        if (result) {
-            User.deleteOne({ _id: req.params.id }, (err) => {
-                res.send("User deleted");
-            });
-        } else {
-            res.send("Can't delete user. Not found");
-        }
-    }).catch((err) => res.send(err));
-}); // delete a user
 
 // leave right at bottom
 app.listen(port, () => console.log(`App listening on port ${port}!`));
