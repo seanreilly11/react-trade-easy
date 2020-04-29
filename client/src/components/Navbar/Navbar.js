@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, Redirect, useLocation } from "react-router-dom";
 import axios from "axios";
 import Swal from "sweetalert2";
 
@@ -70,9 +70,11 @@ export const Navbar = () => {
             {loggedIn ? (
                 <div className="form-inline">
                     <p className="my-2 mr-3">Hi, {sessionStorage.username}!</p>
-                    <button className="btn btn-dark my-2 mr-2">
-                        My account
-                    </button>
+                    <Link to={`/users/${sessionStorage.userID}`}>
+                        <button className="btn btn-dark my-2 mr-2">
+                            My account
+                        </button>
+                    </Link>
                     <button
                         className="btn btn-outline-dark my-2"
                         onClick={handleLogout}
@@ -107,7 +109,9 @@ export const Navbar = () => {
                             Login
                         </button>
                     </form>
-                    <button className="btn btn-dark my-2">Register</button>
+                    <Link to="/register">
+                        <button className="btn btn-dark my-2">Register</button>
+                    </Link>
                 </div>
             )}
         </nav>

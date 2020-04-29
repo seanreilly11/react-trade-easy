@@ -4,6 +4,11 @@ import { SearchBar } from "../SearchBar/SearchBar";
 
 export const ProductPage = ({ match }) => {
     const [product, setProduct] = useState({});
+    const [loggedIn, setLoggedIn] = useState(sessionStorage.username);
+
+    useEffect(() => {
+        setLoggedIn(sessionStorage.username);
+    }, [sessionStorage.username]);
 
     useEffect(() => {
         getProduct(match.params.id);
