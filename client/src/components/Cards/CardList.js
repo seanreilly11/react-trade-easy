@@ -10,7 +10,7 @@ class CardList extends React.Component {
 
     render() {
         return (
-            <div className="row col-12 my-5" id="productCards">
+            <div className="row col-12 my-5">
                 {this.props.products.map((product) => (
                     <Card key={product._id} product={product} />
                 ))}

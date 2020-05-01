@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Link, Redirect, useLocation } from "react-router-dom";
+import { Link, Redirect, useLocation, useHistory } from "react-router-dom";
 import axios from "axios";
 import Swal from "sweetalert2";
 
@@ -7,6 +7,7 @@ export const Navbar = () => {
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
     const [loggedIn, setLoggedIn] = useState(sessionStorage.username);
+    const [history, setHistory] = useState(useHistory());
 
     const loginSubmit = async (e) => {
         e.preventDefault();
