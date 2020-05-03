@@ -1,30 +1,29 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { AccountDetails } from "./AccountDetails";
-import { AccountProducts } from "./AccountProducts";
+import { AccountProductsList } from "./AccountProductsList";
 
 export const AccountPage = ({ match }) => {
     const [user, setUser] = useState({});
-    const [cards, setCards] = useState("selling");
+    const [cardGroup, setCardGroup] = useState("selling");
 
-    const handleCard = (card) => {
-        setCards(card);
+    const handleGroup = (group) => {
+        setCardGroup(group);
+    };
+
+    const getUser = async (id) => {
+        const response = await axios.get(`/users/u=${id}`);
+        setUser(response.data);
     };
 
     useEffect(() => {
         getUser(match.params.id);
     }, []);
 
-    const getUser = async (id) => {
-        const response = await axios.get(`/users/u=${id}`);
-        setUser(response.data);
-        console.log(response.data);
-    };
-
     return (
         <div className="container h-100 my-5">
-            <AccountDetails user={user} handleCard={handleCard} />
-            <AccountProducts cards={cards} />
+            <AccountDetails user={user} handleGroup={handleGroup} />
+            <AccountProductsList cardGroup={cardGroup} />
         </div>
     );
 };

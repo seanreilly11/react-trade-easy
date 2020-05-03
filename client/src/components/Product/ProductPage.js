@@ -7,11 +7,8 @@ export const ProductPage = ({ match }) => {
     const [loggedIn, setLoggedIn] = useState(sessionStorage.username);
 
     useEffect(() => {
-        setLoggedIn(sessionStorage.username);
-    }, [sessionStorage.username]);
-
-    useEffect(() => {
         getProduct(match.params.id);
+        setLoggedIn(sessionStorage.username);
     }, []);
 
     const getProduct = async (id) => {
@@ -19,6 +16,8 @@ export const ProductPage = ({ match }) => {
         setProduct(response.data);
         console.log(response.data);
     };
+
+    console.log(product.shipping);
 
     return (
         <>
@@ -66,17 +65,28 @@ export const ProductPage = ({ match }) => {
                                 ></div>
                                 <div className="mt-3">
                                     <h5 className="mb-0">Seller:</h5>
-                                    {/* <h4 className="mb-0">{sellerData.username}</h4>
-                        <h6 className="mb-2">{sellerData.location}</h6> */}
-                                    {/* {product.shipping.pickup && product.shipping.deliver ? (
-                            <p class="mb-0">
-                                Shipping: Pick up and delivery available
-                            </p>
-                        ) : product.shipping.pickup ? (
-                            <p class="mb-0">Shipping: Pick up only</p>
-                        ) : (
-                            <p class="mb-0">Shipping: Delivery only</p>
-                        )} */}
+                                    <h4 className="mb-0">
+                                        {/* {sellerData.username} */}
+                                    </h4>
+                                    <h6 className="mb-2">
+                                        {/* {sellerData.location} */}
+                                    </h6>
+
+                                    {/* {product.shipping.pickup &&
+                                    product.shipping.deliver ? (
+                                        <p class="mb-0">
+                                            Shipping: Pick up and delivery
+                                            available
+                                        </p>
+                                    ) : product.shipping.pickup ? (
+                                        <p class="mb-0">
+                                            Shipping: Pick up only
+                                        </p>
+                                    ) : (
+                                        <p class="mb-0">
+                                            Shipping: Delivery only
+                                        </p>
+                                    )} */}
                                 </div>
                             </div>
                         </div>

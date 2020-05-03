@@ -1,11 +1,11 @@
 import React, { useState } from "react";
 
-export const AccountDetails = ({ user, handleCard }) => {
+export const AccountDetails = ({ user, handleGroup }) => {
     const [active, setActive] = useState("selling");
 
     const handleActive = (e) => {
         setActive(e.target.attributes[0].value);
-        handleCard(e.target.attributes[0].value);
+        handleGroup(e.target.attributes[0].value);
     };
 
     return (
